@@ -10,6 +10,10 @@ public class Product {
     private Integer quantity;
     private BigDecimal price;
 
+    public Product() {
+
+    }
+
     public Product(String title, String name, String description, Integer quantity, BigDecimal price) {
         this.title = title;
         this.name = name;

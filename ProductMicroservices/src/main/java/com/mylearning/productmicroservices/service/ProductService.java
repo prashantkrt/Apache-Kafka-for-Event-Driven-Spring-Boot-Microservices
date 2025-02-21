@@ -38,9 +38,10 @@ public class ProductService {
                 System.out.println("Product created successfully with id : " + productId);
             }
         });
-        send.join();//now its synchronous call
+        //send.join();//now its synchronous call
         //The code starts asynchronously, but because of send.join();
         // it waits for completion, making it effectively synchronous.
+        LOGGER.info("Returning the product id : " + productId);
 
         return productId;
     }
