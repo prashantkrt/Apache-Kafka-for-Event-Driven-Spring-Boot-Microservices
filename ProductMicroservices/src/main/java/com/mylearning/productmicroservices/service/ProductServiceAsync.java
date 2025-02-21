@@ -12,12 +12,12 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 @Service
-public class ProductService {
+public class ProductServiceAsync {
 
     private final KafkaTemplate<String, ProductCreatedEvent> kafkaTemplate;
-    private final Logger LOGGER = LoggerFactory.getLogger(ProductService.class);
+    private final Logger LOGGER = LoggerFactory.getLogger(ProductServiceAsync.class);
 
-    public ProductService(KafkaTemplate kafkaTemplate) {
+    public ProductServiceAsync(KafkaTemplate kafkaTemplate) {
         this.kafkaTemplate = kafkaTemplate;
     }
 
