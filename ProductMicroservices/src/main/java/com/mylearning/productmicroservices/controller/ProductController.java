@@ -1,6 +1,6 @@
 package com.mylearning.productmicroservices.controller;
 
-import com.mylearning.productmicroservices.event.ErrorMessage;
+import com.mylearning.productmicroservices.dto.ErrorMessage;
 import com.mylearning.productmicroservices.model.Product;
 import com.mylearning.productmicroservices.service.ProductServiceAsync;
 import com.mylearning.productmicroservices.service.ProductServiceSync;
