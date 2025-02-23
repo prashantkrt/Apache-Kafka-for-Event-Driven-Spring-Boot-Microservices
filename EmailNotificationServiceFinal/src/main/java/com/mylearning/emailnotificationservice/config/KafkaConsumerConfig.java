@@ -1,6 +1,5 @@
 package com.mylearning.emailnotificationservice.config;
 
-import com.mylearning.ProductCreatedEvent;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.beans.factory.annotation.Autowired;
