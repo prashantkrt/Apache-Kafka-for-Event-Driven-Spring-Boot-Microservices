@@ -13,8 +13,6 @@ public class ProductCreatedEventHandler {
 
     private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
-    //@KafkaListener(topics={"product-created-event-topic","topicA"})
-    //better way do this way
     @KafkaHandler
     public void handle(ProductCreatedEvent productCreatedEvent) {
         LOGGER.info("Received a new event {}", productCreatedEvent.getTitle());
