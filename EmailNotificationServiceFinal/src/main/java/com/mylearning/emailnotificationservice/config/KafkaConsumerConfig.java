@@ -49,7 +49,6 @@ public class KafkaConsumerConfig {
         return config;
     }
 
-
     @Bean
     public ConsumerFactory<String, Object> consumerFactory() {
         return new DefaultKafkaConsumerFactory<>(consumerConfig());
