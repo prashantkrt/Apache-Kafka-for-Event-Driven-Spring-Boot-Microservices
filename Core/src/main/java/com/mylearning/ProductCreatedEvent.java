@@ -1,4 +1,4 @@
-package com.mylearning.productmicroservices.event;
+package com.mylearning;
 
 import java.math.BigDecimal;
 

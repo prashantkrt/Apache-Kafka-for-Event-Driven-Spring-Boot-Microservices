@@ -1,6 +1,6 @@
 package com.mylearning.emailnotificationservice.handler;
 
-import com.mylearning.emailnotificationservice.event.ProductCreatedEvent;
+import com.mylearning.ProductCreatedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.kafka.annotation.KafkaHandler;

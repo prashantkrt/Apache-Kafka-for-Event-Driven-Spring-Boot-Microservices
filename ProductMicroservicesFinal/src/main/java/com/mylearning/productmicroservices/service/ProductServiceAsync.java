@@ -1,6 +1,6 @@
 package com.mylearning.productmicroservices.service;
 
-import com.mylearning.productmicroservices.event.ProductCreatedEvent;
+import com.mylearning.ProductCreatedEvent;
 import com.mylearning.productmicroservices.model.Product;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
