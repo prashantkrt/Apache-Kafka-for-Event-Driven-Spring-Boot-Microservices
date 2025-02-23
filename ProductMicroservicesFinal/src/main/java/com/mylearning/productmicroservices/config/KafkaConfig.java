@@ -38,6 +38,15 @@ public class KafkaConfig {
     @Value("${spring.kafka.producer.properties.request.timeout.ms}")
     private String requestTimeoutMs;
 
+    @Value("${spring.kafka.producer.max-in-flight-requests}")
+    private String maxInFlightRequests;
+
+    @Value("${spring.kafka.producer.properties.enable.idempotence}")
+    private String idempotent;
+
+    @Value("${spring.kafka.producer.properties.retries}")
+    private String noOfRetries;
+
     @Bean
     public Map<String, Object> producerConfig() {
         Map<String, Object> configs = new HashMap<>();
@@ -48,6 +57,9 @@ public class KafkaConfig {
         configs.put(ProducerConfig.DELIVERY_TIMEOUT_MS_CONFIG, deliveryTimeoutMs);
         configs.put(ProducerConfig.LINGER_MS_CONFIG, lingerMs);
         configs.put(ProducerConfig.REQUEST_TIMEOUT_MS_CONFIG, requestTimeoutMs);
+        configs.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, idempotent);
+        configs.put(ProducerConfig.MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION, maxInFlightRequests);
+        //configs.put(ProducerConfig.RETRIES_CONFIG, noOfRetries);
         return configs;
     }
 
