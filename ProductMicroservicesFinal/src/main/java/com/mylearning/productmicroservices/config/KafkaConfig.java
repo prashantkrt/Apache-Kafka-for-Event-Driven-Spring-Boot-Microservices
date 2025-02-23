@@ -38,13 +38,13 @@ public class KafkaConfig {
     @Value("${spring.kafka.producer.properties.request.timeout.ms}")
     private String requestTimeoutMs;
 
-    @Value("${spring.kafka.producer.max-in-flight-requests}")
+    @Value("${spring.kafka.producer.properties.max.in.flight.requests.per.connection}")
     private String maxInFlightRequests;
 
     @Value("${spring.kafka.producer.properties.enable.idempotence}")
     private String idempotent;
 
-    @Value("${spring.kafka.producer.properties.retries}")
+    @Value("${spring.kafka.producer.retries}")
     private String noOfRetries;
 
     @Bean
