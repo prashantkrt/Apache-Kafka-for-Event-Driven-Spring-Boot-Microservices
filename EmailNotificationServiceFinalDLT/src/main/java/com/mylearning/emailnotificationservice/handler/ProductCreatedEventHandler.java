@@ -15,6 +15,9 @@ public class ProductCreatedEventHandler {
 
     @KafkaHandler
     public void handle(ProductCreatedEvent productCreatedEvent) {
+//        if (true) {
+//            throw new NonRetryableException("NonRetryableException to test it");
+//        }
         LOGGER.info("Received a new event {}", productCreatedEvent.getTitle());
     }
 
