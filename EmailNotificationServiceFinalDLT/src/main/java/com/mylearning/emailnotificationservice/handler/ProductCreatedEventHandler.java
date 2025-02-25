@@ -15,7 +15,7 @@ import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
 @Component
-@KafkaListener(topics = {"product-created-event-topic", "topicA"})
+@KafkaListener(topics = {"product-created-event-topic", "topicA"},groupId = "product-created-events")//we can also use the consumer group id in the KafkaListener
 public class ProductCreatedEventHandler {
 
     private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
