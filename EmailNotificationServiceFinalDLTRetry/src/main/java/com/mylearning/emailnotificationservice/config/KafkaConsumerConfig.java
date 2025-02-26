@@ -1,5 +1,7 @@
 package com.mylearning.emailnotificationservice.config;
 
+import com.mylearning.emailnotificationservice.error.NonRetryableException;
+import com.mylearning.emailnotificationservice.error.RetryableException;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
@@ -15,6 +17,8 @@ import org.springframework.kafka.listener.DefaultErrorHandler;
 import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.kafka.support.serializer.JsonSerializer;
+import org.springframework.util.backoff.FixedBackOff;
+import org.springframework.web.client.HttpServerErrorException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -48,7 +52,12 @@ public class KafkaConsumerConfig {
 
     @Bean
     ConcurrentKafkaListenerContainerFactory<String, Object> kafkaListenerContainerFactory(ConsumerFactory<String, Object> consumerFactory, KafkaTemplate<String, Object> kafkaTemplate) {
-        DefaultErrorHandler errorHandler = new DefaultErrorHandler(new DeadLetterPublishingRecoverer(kafkaTemplate));
+
+        DefaultErrorHandler errorHandler = new DefaultErrorHandler(new DeadLetterPublishingRecoverer(kafkaTemplate),new FixedBackOff(5000, 3));
+
+        errorHandler.addNotRetryableExceptions(NonRetryableException.class, HttpServerErrorException.class);// don't want to retry if this exception comes while implementing the retry mechanism
+        errorHandler.addRetryableExceptions(RetryableException.class);// want to retry if this exception comes while implementing the retry mechanism
+
         ConcurrentKafkaListenerContainerFactory<String, Object> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory);
         factory.setCommonErrorHandler(errorHandler);

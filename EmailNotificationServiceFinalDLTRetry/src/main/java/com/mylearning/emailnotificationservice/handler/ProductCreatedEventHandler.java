@@ -1,6 +1,8 @@
 package com.mylearning.emailnotificationservice.handler;
 
 import com.mylearning.ProductCreatedEvent;
+import com.mylearning.emailnotificationservice.error.NonRetryableException;
+import com.mylearning.emailnotificationservice.error.RetryableException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
@@ -8,10 +10,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.annotation.KafkaHandler;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
 @Component
 @KafkaListener(topics = {"product-created-event-topic", "topicA"}, groupId = "product-created-events")
+//we can also use the consumer group id in the KafkaListener
 public class ProductCreatedEventHandler {
 
     private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
@@ -25,13 +30,30 @@ public class ProductCreatedEventHandler {
     @KafkaHandler
     public void handle(ProductCreatedEvent productCreatedEvent) {
         LOGGER.info("Received a new event {} and product id is {}", productCreatedEvent.getTitle(), productCreatedEvent.getProductId());
+//        scenario for non retry
+//        if (true) {
+//            throw new NonRetryableException("NonRetryableException to test it");
+//        }
 
-        String requestUrl = "http://localhost:8083/response/2010";
-
-        ResponseEntity<String> response = restTemplate.exchange(requestUrl, HttpMethod.GET, null, String.class);
-        if (response.getStatusCode().value() == 200) {
-            LOGGER.info("Received Response from the remote service {}", response.getBody());
+//       Scenario for retry
+        String requestUrl = "http://localhost:8083/response/200";
+        try {
+//        restTemplate.getForEntity(requestUrl,String.class);
+//        restTemplate.getForEntity(requestUrl,String.class,123);
+            ResponseEntity<String> response = restTemplate.exchange(requestUrl, HttpMethod.GET, null, String.class);
+            if (response.getStatusCode().value() == 200) {
+                LOGGER.info("Received Response from the remote service {}", response.getBody());
+            }
+        } catch (ResourceAccessException ex) {
+            LOGGER.error(ex.getMessage());
+            throw new RetryableException(ex);
+        } catch (HttpServerErrorException ex) {
+            LOGGER.error(ex.getMessage());
+        } catch (Exception ex) {
+            LOGGER.error(ex.getMessage());
+            throw new NonRetryableException(ex);
         }
+
     }
 }
 
