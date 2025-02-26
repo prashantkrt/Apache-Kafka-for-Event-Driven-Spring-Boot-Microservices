@@ -2,6 +2,7 @@ package com.mylearning.productmicroservices.service;
 
 import com.mylearning.ProductCreatedEvent;
 import com.mylearning.productmicroservices.model.Product;
+import org.apache.kafka.clients.producer.ProducerRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -26,8 +27,10 @@ public class ProductServiceAsync {
         String productId = UUID.randomUUID().toString().split("-")[0];
         ProductCreatedEvent productCreatedEvent = new ProductCreatedEvent(productId, product.getTitle(), product.getQuantity(), product.getPrice());
 
+        ProducerRecord<String, ProductCreatedEvent> productRecord = new ProducerRecord<>("product-created-event-topic", productId, productCreatedEvent);
+        productRecord.headers().add("messageId", UUID.randomUUID().toString().getBytes());
         //Asynchronous communication with Kafka but wanted to get notified
-        CompletableFuture<SendResult<String, ProductCreatedEvent>> send = kafkaTemplate.send("product-created-event-topic", productId, productCreatedEvent);//topic key,event
+        CompletableFuture<SendResult<String, ProductCreatedEvent>> send = kafkaTemplate.send(productRecord);
 
         send.whenComplete((result, exception) -> {
             if (exception != null) {

@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
 import org.springframework.stereotype.Service;
+
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -28,17 +29,20 @@ public class ProductServiceSync {
         String productId = UUID.randomUUID().toString();
         ProductCreatedEvent productCreatedEvent = new ProductCreatedEvent(productId, product.getTitle(), product.getQuantity(), product.getPrice());
 
-            CompletableFuture<SendResult<String,ProductCreatedEvent>> send = kafkaTemplate.send("product-created-event-topic", productId, productCreatedEvent);
+        ProducerRecord<String, ProductCreatedEvent> productRecord = new ProducerRecord<>("product-created-event-topic", productId, productCreatedEvent);
+        productRecord.headers().add("messageId", UUID.randomUUID().toString().getBytes());
+        CompletableFuture<SendResult<String, ProductCreatedEvent>> send = kafkaTemplate.send(productRecord);
 
-            send.whenComplete((result, exception) -> {
-                if (exception != null) {
-                    LOGGER.error("Product creation failed with id : {} exception : {}", productId, exception.getMessage());
-                } else {
-                    LOGGER.info("Product created successfully with id : {}", result.getRecordMetadata());
-                }
-            });
-            send.join();//sync call
-          //This means the thread will wait until the completable future is completed
+        send.whenComplete((result, exception) -> {
+            if (exception != null) {
+                LOGGER.error("Product creation failed with id : {} exception : {}", productId, exception.getMessage());
+            } else {
+                LOGGER.info("Product created successfully with id : {}", result.getRecordMetadata());
+            }
+        });
+
+        send.join();//sync call
+        //This means the thread will wait until the completable future is completed
         return productId;
     }
 
@@ -49,11 +53,12 @@ public class ProductServiceSync {
         LOGGER.info("Before publishing an Event");
         try {
             //SendResult<String, ProductCreatedEvent> result = kafkaTemplate.send("product-created-event-topic", productId, productCreatedEvent).get();
-            ProducerRecord<String, ProductCreatedEvent> productRecord = new ProducerRecord<>("product-created-event-topic",productId,productCreatedEvent);
-            productRecord.headers().add("messageId", UUID.randomUUID().toString().getBytes());
+            ProducerRecord<String, ProductCreatedEvent> productRecord = new ProducerRecord<>("product-created-event-topic", productId, productCreatedEvent);
+            //productRecord.headers().add("messageId", UUID.randomUUID().toString().getBytes());
+            productRecord.headers().add("messageId", "123".getBytes());
             SendResult<String, ProductCreatedEvent> result = kafkaTemplate.send(productRecord).get();
 
-            LOGGER.info("After publishing an Event => partition, => offset, => topic, => timestamp :{},{} ,{},{} ",result.getRecordMetadata().partition(),result.getRecordMetadata().offset(),result.getRecordMetadata().topic(),result.getRecordMetadata().timestamp());
+            LOGGER.info("After publishing an Event => partition, => offset, => topic, => timestamp :{},{} ,{},{} ", result.getRecordMetadata().partition(), result.getRecordMetadata().offset(), result.getRecordMetadata().topic(), result.getRecordMetadata().timestamp());
         } catch (InterruptedException | ExecutionException e) {
             throw new RuntimeException(e);
         }

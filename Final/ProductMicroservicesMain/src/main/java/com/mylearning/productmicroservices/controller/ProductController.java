@@ -37,7 +37,7 @@ public class ProductController {
     public ResponseEntity<Object> createProductSync(@RequestBody Product product) {
         String productId;
         try {
-            productId = productServiceSync.createProduct(product);
+            productId = productServiceSync.createProductSync(product);
         } catch (Exception e) {
             LOGGER.error("Product creation failed new product {} exception ", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
