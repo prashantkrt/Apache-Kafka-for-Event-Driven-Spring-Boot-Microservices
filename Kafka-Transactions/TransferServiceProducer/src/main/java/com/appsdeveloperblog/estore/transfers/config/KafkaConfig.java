@@ -77,11 +77,11 @@ public class KafkaConfig {
 
 	@Bean
 	NewTopic createWithdrawTopic() {
-		return TopicBuilder.name(withdrawTopicName).partitions(3).replicas(3).build();
+		return TopicBuilder.name(withdrawTopicName).partitions(1).replicas(1).build();
 	}
 
 	@Bean
 	NewTopic createDepositTopic() {
-		return TopicBuilder.name(depositTopicName).partitions(3).replicas(3).build();
+		return TopicBuilder.name(depositTopicName).partitions(1).replicas(1).build();
 	}
 }
