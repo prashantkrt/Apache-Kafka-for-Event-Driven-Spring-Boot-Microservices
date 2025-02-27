@@ -3,6 +3,7 @@ package com.appsdeveloperblog.estore.transfers.config;
 import java.util.HashMap;
 import java.util.Map;
 
+import jakarta.persistence.EntityManagerFactory;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,6 +14,7 @@ import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.kafka.transaction.KafkaTransactionManager;
+import org.springframework.orm.jpa.JpaTransactionManager;
 
 @Configuration
 public class KafkaConfig {
@@ -81,9 +83,23 @@ public class KafkaConfig {
 		return new KafkaTemplate<>(producerFactory);
 	}
 
-	@Bean
+	//it will not manage the database transaction,
+	//it will only manage the kafka transaction,
+	//we need another transaction for the database transactions, and it will be managed by JpaTransactionManager
+	@Bean("kafkaTransactionManager")
 	KafkaTransactionManager<String, Object> kafkaTransactionManager(ProducerFactory<String, Object> producerFactory) {
 		return new KafkaTransactionManager<>(producerFactory);
+	}
+
+	// for database transaction manager.
+	// when we jpa in spring boot application by default, spring boot will create the transactionManager mean for managing the transaction
+	// now since we have manually created the bean of jpaTransactionManager.
+	// if we don't create this bean, spring will auto create the transactionManager and
+	// now since we have created then we have to assign the same bean name transactionManager,
+	// we have to assign the same name transactionManager.
+	@Bean("transactionManager")
+	JpaTransactionManager jpaTransactionManager(EntityManagerFactory entityManagerFactory) {
+		return new JpaTransactionManager(entityManagerFactory);
 	}
 	
 	@Bean
