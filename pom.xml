@@ -9,7 +9,7 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.myLearning</groupId>
-    <artifactId>Apache Kafka</artifactId>
+    <artifactId>Apache-Kafka</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>Apache Kafka</name>
     <description>Apache Kafka</description>
