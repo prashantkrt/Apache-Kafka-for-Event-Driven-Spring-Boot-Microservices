@@ -41,6 +41,7 @@ public class TransferServiceImpl implements TransferService {
 
     //by default, transaction rollback if runtime exception occurs
     //will have to replace the kafka transaction manager with the jpa transaction manager
+    // this will work with both kafka and jpa
     @Transactional(value = "transactionManager")
     @Override
     public boolean transfer(TransferRestModel transferRestModel) {

@@ -97,6 +97,7 @@ public class KafkaConfig {
 	// if we don't create this bean, spring will auto create the transactionManager and
 	// now since we have created then we have to assign the same bean name transactionManager,
 	// we have to assign the same name transactionManager.
+	// this will work with both kafka and jpa
 	@Bean("transactionManager")
 	JpaTransactionManager jpaTransactionManager(EntityManagerFactory entityManagerFactory) {
 		return new JpaTransactionManager(entityManagerFactory);
